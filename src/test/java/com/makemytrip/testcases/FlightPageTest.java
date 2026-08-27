@@ -2,23 +2,38 @@ package com.makemytrip.testcases;
 
 import org.testng.annotations.Test;
 
-import com.makemytrip.base.BaseTest;
 import com.makemytrip.pages.HomePage;
 
-public class FlightPageTest extends BaseTest {
+public class FlightPageTest extends TestSetup {
 
-	@Test
-	public void searchFlight() {
+    @Test
+    public void searchFlight() {
 
-		HomePage home = new HomePage();
-		home.selectFlightMenu();
+        test.info("Starting flight search");
 
-		home.roundTripMenu();
-		home.enterDepartureCity();
-		home.enterReturnCity();
-		home.enterDepartureDate();
-		home.enterReturnDate();
-		home.searchButton();
-	}
+        HomePage homePage = new HomePage();
 
+        test.info("Selecting Flight menu");
+        homePage.selectFlightMenu();
+
+        test.info("Selecting Round Trip");
+        homePage.roundTripMenu();
+
+        test.info("Entering departure city");
+        homePage.enterDepartureCity();
+
+        test.info("Entering return city");
+        homePage.enterReturnCity();
+
+        test.info("Selecting departure date");
+        homePage.enterDepartureDate();
+
+        test.info("Selecting return date");
+        homePage.enterReturnDate();
+
+        test.info("Clicking Search button");
+        homePage.searchButton();
+
+        test.pass("Flight search completed successfully");
+    }
 }

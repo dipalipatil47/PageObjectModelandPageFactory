@@ -1,27 +1,29 @@
 package com.makemytrip.testcases;
 
-import java.io.IOException;
-
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 
 import com.makemytrip.base.BaseTest;
 
 public class TestSetup extends BaseTest {
 
-	@BeforeSuite
-	public void setup() throws IOException {
+    @AfterMethod
+    public void tearDown() {
 
-		readPropertyFile();
-		driverInitialization();
-		setExtentReport();
+        if (driver != null) {
 
-	}
+            driver.quit();
 
-	@AfterSuite
-	public void tearDown() {
-		extent.flush();
-		driver.quit();
-	}
+            driver = null;
+        }
+    }
 
+    @AfterSuite
+    public void afterSuite() {
+
+        if (extent != null) {
+
+            extent.flush();
+        }
+    }
 }
