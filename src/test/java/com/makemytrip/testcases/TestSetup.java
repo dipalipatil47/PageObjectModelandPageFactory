@@ -14,11 +14,13 @@ public class TestSetup extends BaseTest {
 
 		readPropertyFile();
 		driverInitialization();
+		setExtentReport();
 
 	}
 
 	@AfterSuite
 	public void tearDown() {
+		extent.flush();
 		driver.quit();
 	}
 

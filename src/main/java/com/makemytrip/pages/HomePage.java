@@ -3,6 +3,7 @@ package com.makemytrip.pages;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
@@ -18,8 +19,8 @@ import com.makemytrip.util.TestUtil;
 public class HomePage extends BaseTest {
 
     // Flight menu
-    @FindBy(xpath = "//a[contains(@href,'/flights/')]")
-    WebElement flightMenu;
+	@FindBy(xpath = "//a[contains(@href,'/flights/')]")
+	WebElement flightMenu;
 
     // Round Trip
     @FindBy(css = "li[data-cy='roundTrip']")
@@ -67,17 +68,42 @@ public class HomePage extends BaseTest {
     // Select Flights menu
     public void selectFlightMenu() {
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
+        // Close login popup if it appears
+        closeLoginPopup();
+
+        // Wait until Flight menu is visible
         wait.until(ExpectedConditions.visibilityOf(flightMenu));
 
+        // Scroll Flight menu to center of screen
         ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                flightMenu);
+                "arguments[0].scrollIntoView({block:'center', inline:'center'});",
+                flightMenu
+        );
 
-        wait.until(ExpectedConditions.elementToBeClickable(flightMenu));
+        // Small wait for page overlay/banner to settle
+        try {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.cssSelector("div.imageSlideContainer")
+            ));
+        } catch (TimeoutException e) {
+            // Continue if banner does not disappear
+        }
 
-        flightMenu.click();
+        try {
+            // Normal Selenium click
+            wait.until(ExpectedConditions.elementToBeClickable(flightMenu));
+            flightMenu.click();
+
+        } catch (ElementClickInterceptedException e) {
+
+            // JavaScript click as fallback
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].click();",
+                    flightMenu
+            );
+        }
     }
 
     // Select Round Trip
